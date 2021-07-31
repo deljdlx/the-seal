@@ -136,7 +136,9 @@ export default class Seal
 
     if(
       this.refreshedProperties['borderSize']
-      || this.refreshedProperties['size']) {
+      || this.refreshedProperties['size']
+      || this.refreshedProperties['backgroundImage']
+    ) {
       this.drawBackground();
     }
 
@@ -284,6 +286,9 @@ export default class Seal
   }
 
   drawTitle() {
+
+    console.log(this.sentence);
+
     const fontSize = Math.min(
       (this.titleRadius / this.sentence.length * 3),
       this.titleRadius / 5
