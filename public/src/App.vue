@@ -4,10 +4,45 @@
 
 
 
+        <v-overlay
+          :absolute="true"
+          :value="overlay"
 
-      <div ref="seal-url" class="seal-url" ><a :href="sealURL" target="_blank">The Seal</a></div>
+        >
+
+          <textarea ref="source-code" class="source-code" v-model="sealSourceCode"></textarea>
+
+          <v-btn
+            color="success"
+            @click="overlay = false"
+            right
+            block
+          >
+            Close
+          </v-btn>
+        </v-overlay>
+
+
+
+
+      <div ref="seal-buttons" class="seal-buttons" >
+        <v-btn :href="sealURL" target="_blank" small>
+          <v-icon>mdi-share-variant</v-icon> Sharing URL
+        </v-btn>
+
+        <v-btn small @click="overlay = !overlay">
+          <v-icon>mdi-code-braces</v-icon> Source
+        </v-btn>
+
+        <v-btn href="https://github.com/deljdlx/the-seal" target="_blank" small>
+          <v-icon>mdi-share-variant</v-icon> Github
+        </v-btn>
+
+      </div>
 
       <div ref="seal" class="seal-preview"></div>
+
+
 
 
 
@@ -166,6 +201,30 @@
 
 
 
+
+        <div class="seal-option">
+          <h3>Background first color</h3>
+          <v-color-picker
+            dot-size="25"
+            swatches-max-height="200"
+            hide-inputs
+            v-model="parameters.containerColor0"
+          ></v-color-picker>
+        </div>
+
+        <div class="seal-option">
+          <h3>Background second color</h3>
+          <v-color-picker
+            dot-size="25"
+            swatches-max-height="200"
+            hide-inputs
+            v-model="parameters.containerColor1"
+          ></v-color-picker>
+        </div>
+
+
+
+
         <div class="seal-option">
           <h3>Crown color</h3>
           <v-color-picker
@@ -197,6 +256,8 @@
         </div>
       </div>
 
+
+
   </v-app>
 
 </template>
@@ -210,8 +271,11 @@ export default {
 
   data: () => ({
 
-    parameters: {
+    overlay: false,
 
+    parameters: {
+      containerColor0: '#fff',
+      containerColor1: '#000',
       text: 'The Seal',
       image: 'https://ec.europa.eu/jrc/sites/default/files/styles/normal-responsive/public/fotolia-92027264european-day-forest-green-forest.jpg?itok=p4u8v1R5',
 
@@ -242,40 +306,83 @@ export default {
   computed: {
     sealURL() {
       let location = document.location;
-      console.log(location);
 
-      console.log(this.$data.parameters);
-      let url =  'http://' + location.host + '/service/?'
+      let url =  'http://' + location.host + '/static/?'
       for(let parameter in this.$data.parameters) {
         url += '&' + parameter + '=' + encodeURIComponent(this.$data.parameters[parameter]);
       }
-
       return url;
+    },
+    sealSourceCode: {
+      set(value) {
+        console.log(value)
+      },
+      get() {
+
+        let location = document.location;
+        let url =  'http://' + location.host + '/static';
+
+        let source =  '';
+
+        source += `<!-- The Seal preview URL` + "\n";
+        source += `` + this.sealURL + "\n//-->\n\n";
+
+        source += `<!-- The Seal CSS //-->` + "\n";
+        source += `<link rel="stylesheet" href="` + `` + url + `/the-seal.css" />` + "\n\n";
+
+        source += `<!-- The Seal JS class //-->` + "\n";
+        source += `<script ` + ` src="` + url + `/the-seal.js"></` + `script>` + "\n";
+
+        source += `<!-- The Seal JS helper //-->` + "\n";
+        source += `<script ` + ` src="` + url + `/run-the-seal.js"></` + `script>` + "\n\n";
+        source +=  `<script` + `>` + "\n";
+
+        source += "theSeal({\n";
+
+        source += "  container: " + "document.body,\n";
+
+        for(let parameter in this.$data.parameters) {
+          let value = this.$data.parameters[parameter];
+
+          if(typeof(value) === 'string') {
+            value = value.replace(/'/gi, "&apos");
+          }
+
+          if(isNaN(value * 1)) {
+            value = "'" + value + "'";
+          }
+          source += "  " + parameter + ': ' + "" + value + ",\n";
+        }
+
+        source += "});\n";
+        source +=  `</` + `script>`;
+
+        return source;
+      }
     }
   },
 
   mounted() {
+
     let size = this.parameters.radius;
 
     this.seal = new Seal(this.$refs['seal'], size, this.parameters.text, this.parameters.image);
 
+    this.seal.setProperty('containerColor0', this.parameters.containerColor0);
+    this.seal.setProperty('containerColor1', this.parameters.containerColor1);
+
     this.seal.setProperty('size', this.parameters.radius * 2);
     this.seal.setProperty('titleRadius', this.parameters.titleRadius);
+    this.seal.setProperty('backgroundImage', this.parameters.image);
 
 
     this.seal.setProperty('rotationSpeed', this.parameters.rotationSpeed);
     this.seal.setProperty('oscillationSpeed', 0);
 
-
-
     this.seal.setProperty('borderColor', this.parameters.borderColor);
     this.seal.setProperty('borderSize', this.parameters.borderSize);
 
     this.seal.setProperty('textColor', this.parameters.textColor);
-
-
-
-
 
     this.seal.setProperty('crownColor', this.parameters.crownColor);
 
@@ -284,8 +391,6 @@ export default {
     this.seal.setProperty('gearRadius', this.parameters.gearRadius, true);
 
     this.seal.setProperty('gearBorder', this.parameters.gearBorder, true);
-
-
 
     this.seal.setProperty('crownSkewX', this.parameters.crownSkewX, true);
     this.seal.setProperty('crownSkewY', this.parameters.crownSkewY, true);
@@ -300,8 +405,8 @@ export default {
     parameters: {
       handler() {
 
-
-        console.log(this.text);
+        this.seal.setProperty('containerColor0', this.parameters.containerColor0);
+        this.seal.setProperty('containerColor1', this.parameters.containerColor1);
 
         this.seal.setProperty('sentence', this.parameters.text);
 
@@ -334,28 +439,23 @@ export default {
         this.seal.setProperty('textColor', this.parameters.textColor);
 
         this.seal.refresh();
-
-
       },
       deep: true
     },
-
-    /*
-    rotationSpeed() {
-      this.seal.setProperty('rotationSpeed', this.rotationSpeed);
-    },
-    radius() {
-      this.seal.setProperty('radius', this.radius);
-    },
-    */
   }
-
-
 };
 </script>
 
 <style>
-@import 'assets/the-seal.css';
+@import '../public/static/the-seal.css';
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
 
 
 hr {
@@ -403,23 +503,28 @@ hr {
   display: none;
 }
 
-.seal-url {
+.seal-buttons {
   position: absolute;
-  top: 2rem;
-  width: 50vw;
-  margin-left: -25vw;
-  left: 50%;
+  top: 0rem;
+  width: calc(100vw - 200px - 4rem);
+  left: calc(200px + 3rem + 2px);
   z-index: 5000;
-  border: solid 1px #555;
+  border-bottom: solid 1px #555;
 
-  padding: 0 1rem;
+  padding: 0.5rem 0.5rem;
   background-color: #fff8;
-  border-radius: 1rem;
-
-  font-size: 3rem;
-  text-align: center;
   font-weight: bold;
+}
 
+.source-code {
+  background-color: #000c;
+  height: calc(100vh - 10rem);
+  width: calc(100vw - 200px - 4rem - 2rem);
+  margin: auto;
+  color: #fff;
+  padding: 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  display: block;
 }
 
 </style>

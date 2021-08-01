@@ -1,32 +1,13 @@
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<link rel="stylesheet" href="./the-seal.css"/>
-
-
-</head>
-
-
-<body>
-
-
-<script src="./domToImage.js"></script>
-<script src="./the-seal.js"></script>
-
-<script>
-
-
-console.log(document.location);
-
-function theSeal() {
+function theSeal(options = null) {
   this.parameters = {
 
     container: null,
 
+    containerColor0: '#fff',
+    containerColor1: '#000',
+
     text: 'The Seal',
+    image: './forest.jpg',
     radius: 100,
     crownRadius: 150,
     titleRadius: 100,
@@ -48,33 +29,53 @@ function theSeal() {
     rotationSpeed: 5,
   }
 
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
+  if(options === null) {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
 
-  for(let option in this.parameters) {
-    let value = urlParams.get(option);
+    for(let option in this.parameters) {
+      let value = urlParams.get(option);
 
-    if(value !== null) {
-      this.parameters[option] = value;
+      if(value !== null) {
+        this.parameters[option] = value;
+      }
+    }
+  }
+  else {
+    for(let option in options) {
+      let value = options[option];
+      if(value !== null) {
+        this.parameters[option] = value;
+      }
     }
   }
 
+
   console.log(this.parameters);
 
-
-
   let size = this.parameters.radius;
-  let image = './forest.jpg';
   let container
 
   if(!this.parameters.container) {
     container = document.body;
   }
   else {
-    container = document.querySelector(this.parameters.container);
+    if(typeof(this.parameters.container) === 'string') {
+      container = document.querySelector(this.parameters.container);
+    }
+    else {
+      container = this.parameters.container;
+    }
   }
 
-  this.seal = new Seal(container, size, this.parameters.text, image);
+  this.seal = new Seal(container, size, this.parameters.text, this.parameters.image);
+
+  console.log(this.parameters);
+
+  this.seal.setProperty('containerColor0', this.parameters.containerColor0);
+  this.seal.setProperty('containerColor1', this.parameters.containerColor1);
+  
+
 
   this.seal.setProperty('size', this.parameters.radius * 2);
   this.seal.setProperty('titleRadius', this.parameters.titleRadius);
@@ -89,10 +90,6 @@ function theSeal() {
   this.seal.setProperty('borderSize', this.parameters.borderSize);
 
   this.seal.setProperty('textColor', this.parameters.textColor);
-
-
-
-
 
   this.seal.setProperty('crownColor', this.parameters.crownColor);
 
@@ -113,44 +110,4 @@ function theSeal() {
 
   // this.seal.render();
   this.seal.refresh();
-
-
-/*
-  setTimeout(() => {
-    var node = document.querySelector('.the-seal');
-    var options = {
-        quality: 0.95
-    };
-
-    domtoimage.toJpeg(node, options).then(function (dataUrl) {
-        // Do something with the dataURL (data:image/jpeg;base64,i........)
-        var img = new Image();
-        img.src = dataUrl;
-        document.body.appendChild(img);
-    });
-  }, 500);
-*/
-
-
-  // domtoimage.toPng(node)
-
-  /*
-  domtoimage.toSvg(node)
-    .then(function (dataUrl) {
-        var img = new Image();
-        img.src = dataUrl;
-        document.body.appendChild(img);
-        console.log(dataUrl)
-    })
-    .catch(function (error) {
-        console.error('oops, something went wrong!', error);
-    });
-  */
-
 }
-
-theSeal();
-</script>
-
-</body>
-</html>

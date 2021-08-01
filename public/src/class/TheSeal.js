@@ -1,7 +1,6 @@
 export default class Seal
 {
 
-
   target = null;
 
   background = null;
@@ -30,6 +29,9 @@ export default class Seal
   crownSkewY = 0;
   crownScaleX = 0;
   crownScaleY = 0;
+
+  containerColor0 = '#fff';
+  containerColor1 = '#000';
 
 
   refreshedProperties = {
@@ -70,6 +72,7 @@ export default class Seal
     }
 
 
+    this.drawContainer();
     this.initialize();
     this.drawCrown();
     this.drawBackground();
@@ -119,6 +122,10 @@ export default class Seal
       this.centerSeal();
     }
 
+    if(this.refreshedProperties['containerColor0'] || this.refreshedProperties['containerColor1'])  {
+      this.drawContainer();
+    }
+
     if(
       this.refreshedProperties['gearSize']
       || this.refreshedProperties['size']
@@ -138,7 +145,8 @@ export default class Seal
       this.refreshedProperties['borderSize']
       || this.refreshedProperties['size']
       || this.refreshedProperties['backgroundImage']
-    ) {
+    ){
+
       this.drawBackground();
     }
 
@@ -154,6 +162,14 @@ export default class Seal
     for(let attribute in this.refreshedProperties) {
       this.refreshedProperties[attribute] = false;
     }
+  }
+
+  drawContainer() {
+    this.target.style.background = 'radial-gradient(circle, ' + this.containerColor0 + ' 0%, ' + this.containerColor1 +  ' 100%)'
+
+
+    console.log(this.target.style.background);
+    console.log(this.target.style);
   }
 
   centerSeal() {
@@ -329,15 +345,7 @@ export default class Seal
       // span.style.outline = 'solid 1px #f0f';
 
       this.title.append(span);
-
-
     }
-
     this.seal.appendChild(this.title);
   }
 }
-
-
-
-
-
