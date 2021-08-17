@@ -7,7 +7,7 @@ function theSeal(options = null) {
     containerColor1: '#000',
 
     text: 'The Seal',
-    image: './forest.jpg',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7kPZqPN8RRvHNpUL3WP4MQRSInAuWlkkLcQ&usqp=CAU',
     radius: 100,
     crownRadius: 150,
     titleRadius: 100,

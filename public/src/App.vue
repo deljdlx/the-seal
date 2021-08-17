@@ -277,7 +277,7 @@ export default {
       containerColor0: '#fff',
       containerColor1: '#000',
       text: 'The Seal',
-      image: 'https://ec.europa.eu/jrc/sites/default/files/styles/normal-responsive/public/fotolia-92027264european-day-forest-green-forest.jpg?itok=p4u8v1R5',
+      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7kPZqPN8RRvHNpUL3WP4MQRSInAuWlkkLcQ&usqp=CAU',
 
       radius: 100,
       crownRadius: 150,
@@ -295,8 +295,8 @@ export default {
       borderColor: '#fff',
       borderSize: 8,
 
-      crownColor: '#faa',
-      textColor: '#f0f',
+      crownColor: '#AAC3FFB7',
+      textColor: '#A47FE4FF',
 
       rotationSpeed: 5,
     },
